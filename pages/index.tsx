@@ -1,7 +1,13 @@
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
+import {useEffect} from 'react'
+import {useSession, signOut, signIn} from 'next-auth/client'
 
 export default function Home() {
+  const [session, loading] = useSession()
+  useEffect(()=>{
+    console.log('SESSION', session)
+  },[session])
   return (
     <div className={styles.container}>
       <Head>
@@ -11,8 +17,12 @@ export default function Home() {
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
+          Welcome {session ? session.user.name : null}
+          <br/>
         </h1>
+        {session ? <img src={session.user.image} alt={session.user.name}/> : null}
+          {loading ? <h3>Loading . . . .</h3> : null}
+          {session ? <button onClick={()=>signOut()}>Signout</button> : <button onClick={()=>signIn('github')}>Signin Github</button>}
 
         <p className={styles.description}>
           Get started by editing{' '}
